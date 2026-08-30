@@ -1,0 +1,22 @@
+# Maven build
+target/
+
+# Compiled classes
+*.class
+
+# Packaged apps
+*.jar
+*.war
+*.ear
+
+# Eclipse
+.settings/
+.classpath
+.project
+
+# IDE / OS
+.metadata/
+bin/
+*.log
+.DS_Store
+Thumbs.db

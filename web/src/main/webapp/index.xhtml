@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:pt="jakarta.faces.passthrough">
+
+<h:head>
+    <meta charset="UTF-8"/>
+    <title>Gestión de Vehiculos - TSE</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        .formulario {
+            display: grid;
+            grid-template-columns: 140px 220px;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        input {
+            box-sizing: border-box;
+            padding: 6px;
+            width: 220px;
+        }
+
+        button,
+        input[type="submit"] {
+            padding: 7px 15px;
+            width: auto;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .botones {
+            margin: 15px 0 25px;
+        }
+
+        .botones input {
+            margin-right: 8px;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        .exito {
+            color: green;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</h:head>
+
+<h:body>
+
+    <h:form id="formulario">
+
+        <h:panelGroup id="mensajes" layout="block">
+
+            <h:messages errorClass="error"
+                        infoClass="exito"
+                        showDetail="true"/>
+
+            <h:outputText value="#{vehiculoBean.mensajeError}"
+                          styleClass="error"
+                          rendered="#{not empty vehiculoBean.mensajeError}"/>
+
+            <h:outputText value="#{vehiculoBean.mensajeExito}"
+                          styleClass="exito"
+                          rendered="#{not empty vehiculoBean.mensajeExito}"/>
+
+        </h:panelGroup>
+
+        <h2>Alta de Vehiculo</h2>
+
+        <h:panelGroup id="alta" layout="block">
+            <div class="formulario">
+
+                <h:outputLabel for="id" value="ID:"/>
+                <h:inputText id="id"
+                             value="#{vehiculoBean.vehiculo.id}"
+                             required="true"
+                             requiredMessage="El ID es obligatorio."/>
+
+                <h:outputLabel for="modelo" value="Modelo:"/>
+                <h:inputText id="modelo"
+                             value="#{vehiculoBean.vehiculo.modelo}"
+                             required="true"
+                             requiredMessage="El modelo es obligatorio."/>
+
+                <h:outputLabel for="peso" value="Peso (kg):"/>
+                <h:inputText id="peso"
+                             value="#{vehiculoBean.vehiculo.peso}"
+                             required="true"
+                             requiredMessage="El peso es obligatorio."
+                             pt:type="number"
+                             pt:min="1"/>
+
+                <h:outputLabel for="potencia" value="Potencia (CV):"/>
+                <h:inputText id="potencia"
+                             value="#{vehiculoBean.vehiculo.potencia}"
+                             required="true"
+                             requiredMessage="La potencia es obligatoria."
+                             pt:type="number"
+                             pt:min="1"/>
+
+                <h:outputLabel for="fecha" value="Fecha de fabricacion:"/>
+                <h:inputText id="fecha"
+                             value="#{vehiculoBean.vehiculo.fechaFabricacion}"
+                             required="true"
+                             requiredMessage="La fecha es obligatoria."
+                             pt:type="date">
+                    <f:convertDateTime type="localDate"
+                                       pattern="yyyy-MM-dd"/>
+                </h:inputText>
+
+            </div>
+
+            <div class="botones">
+                <h:commandButton value="Guardar vehiculo"
+                                 action="#{vehiculoBean.alta}">
+                    <f:ajax execute="alta"
+                            render="alta mensajes tabla"/>
+                </h:commandButton>
+            </div>
+        </h:panelGroup>
+
+        <hr/>
+
+        <h2>Busqueda por modelo</h2>
+
+        <h:panelGroup id="busqueda" layout="block">
+            <div class="formulario">
+                <h:outputLabel for="buscarModelo" value="Modelo:"/>
+                <h:inputText id="buscarModelo"
+                             value="#{vehiculoBean.buscarModelo}"/>
+            </div>
+
+            <div class="botones">
+                <h:commandButton value="Buscar"
+                                 action="#{vehiculoBean.buscarPorModelo}">
+                    <f:ajax execute="busqueda"
+                            render="mensajes tabla"/>
+                </h:commandButton>
+
+                <h:commandButton value="Limpiar busqueda"
+                                 action="#{vehiculoBean.limpiarBusqueda}"
+                                 immediate="true">
+                    <f:ajax execute="@this"
+                            render="busqueda mensajes tabla"/>
+                </h:commandButton>
+
+                <h:commandButton value="Refrescar listado"
+                                 action="#{vehiculoBean.listar}"
+                                 immediate="true">
+                    <f:ajax execute="@this"
+                            render="mensajes tabla"/>
+                </h:commandButton>
+            </div>
+        </h:panelGroup>
+
+        <h2>Vehiculos registrados</h2>
+
+        <h:panelGroup id="tabla" layout="block">
+
+            <h:dataTable value="#{vehiculoBean.lista}"
+                         var="v"
+                         rendered="#{not empty vehiculoBean.lista}">
+
+                <h:column>
+                    <f:facet name="header">ID</f:facet>
+                    <h:outputText value="#{v.id}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Modelo</f:facet>
+                    <h:outputText value="#{v.modelo}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Peso (kg)</f:facet>
+                    <h:outputText value="#{v.peso}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Potencia (CV)</f:facet>
+                    <h:outputText value="#{v.potencia}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Fecha de fabricación</f:facet>
+                    <h:outputText value="#{v.fechaFabricacion}">
+                        <f:convertDateTime type="localDate"
+                                           pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </h:column>
+
+            </h:dataTable>
+
+            <h:outputText value="No hay vehiculos para mostrar."
+                          rendered="#{empty vehiculoBean.lista}"/>
+
+        </h:panelGroup>
+
+    </h:form>
+
+</h:body>
+</html>

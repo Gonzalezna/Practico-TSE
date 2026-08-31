@@ -1,4 +1,4 @@
-FROM jboss/wildfly:latest
+FROM quay.io/wildfly/wildfly:37.0.0.Final-jdk21
 
 COPY target/*.ear /opt/jboss/wildfly/standalone/deployments/
 

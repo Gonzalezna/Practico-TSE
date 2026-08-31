@@ -46,8 +46,9 @@ jobs:
 
       - name: Deploy en OpenShift
         run: |
-          oc login --token=${{ secrets.OPENSHIFT_TOKEN }} --server=${{ secrets.OPENSHIFT_SERVER }}
-          oc project ${{ env.OPENSHIFT_NAMESPACE }}
+          oc login --token="${{ secrets.OPENSHIFT_TOKEN }}" --server="${{ secrets.OPENSHIFT_SERVER }}"
           oc set image deployment/${{ env.OPENSHIFT_DEPLOYMENT }} \
-            ${{ env.OPENSHIFT_CONTAINER }}=${{ env.IMAGE_NAME }}:${{ github.sha }}
-          oc rollout status deployment/${{ env.OPENSHIFT_DEPLOYMENT }}
+          ${{ env.OPENSHIFT_CONTAINER }}=${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            -n ${{ env.OPENSHIFT_NAMESPACE }}
+          oc rollout status deployment/${{ env.OPENSHIFT_DEPLOYMENT }} \
+            -n ${{ env.OPENSHIFT_NAMESPACE }}

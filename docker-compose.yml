@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgis/postgis:15-3.3
+    pull_policy: never
+    container_name: practico-tse-db
+    environment:
+      POSTGRES_DB: practico_tse
+      POSTGRES_USER: practico
+      POSTGRES_PASSWORD: practico
+    ports:
+      - "5432:5432"
+    volumes:
+      - practico_tse_pgdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    pull_policy: never
+    container_name: practico-tse-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+
+volumes:
+  practico_tse_pgdata:

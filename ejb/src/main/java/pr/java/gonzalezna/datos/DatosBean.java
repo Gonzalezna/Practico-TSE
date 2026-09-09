@@ -1,46 +1,38 @@
 package pr.java.gonzalezna.datos;
 
-import jakarta.ejb.Singleton;
-import java.util.ArrayList;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
+
 import pr.java.gonzalezna.entidades.Vehiculo;
 
-@Singleton
+@Stateless
 public class DatosBean implements IDatosLocal, IDatosRemote{
 
-	//Lista en memoria para simular BD
-	private final List<Vehiculo> vehiculos = new ArrayList<>();
+	@PersistenceContext(unitName = "practico-tsePersistenceUnit")
+	private EntityManager em;
+	
 	
 	@Override
 	public void agregarVehiculo(Vehiculo vehiculo) {
-		vehiculos.add(vehiculo);
+		em.persist(vehiculo);
 	}
 	
 	@Override
 	public List<Vehiculo> obtenerVehiculos(){
-		//Retornamos una copia de la lista
-		return new ArrayList<>(vehiculos);
+		return em.createQuery("SELECT V FROM Vehiculo V", Vehiculo.class).getResultList();
 	}
 	
 	@Override
 	public Vehiculo buscarVehiculoPorId(int id) {
-		for(Vehiculo v : vehiculos) {
-			if(v.getId() == id) {
-				return v;
-			}
-		}
-		return null;
+		return em.find(Vehiculo.class, id);
 	}
 	
 	  @Override
 	    public List<Vehiculo> buscarVehiculoPorModelo(String modelo) {
-	    	List<Vehiculo> resultado = new ArrayList<>();
-	        for (Vehiculo v : obtenerVehiculos()) {
-	            if (v.getModelo().equalsIgnoreCase(modelo)) {
-	                resultado.add(v);
-	            }
-	        }
-	        return resultado;
-	    }
-	
+	    	return em.createQuery("SELECT V FROM Vehiculo V WHERE LOWER(V.modelo) = LOWER(:modelo)", Vehiculo.class)
+	    			.setParameter("modelo", modelo)
+	    			.getResultList();	
+	  }
 }

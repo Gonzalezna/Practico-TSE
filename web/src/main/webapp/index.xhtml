@@ -145,8 +145,13 @@
             </div>
 
             <div class="botones">
-                <h:commandButton value="Guardar vehiculo"
+                <h:commandButton value="Guardar vehiculo por EJB"
                                  action="#{vehiculoBean.alta}">
+                    <f:ajax execute="alta"
+                            render="alta mensajes tabla"/>
+                </h:commandButton>
+                <h:commandButton value="Guardar vehiculo por JMS"
+                                 action="#{vehiculoBean.enviarAltaVehiculo}">
                     <f:ajax execute="alta"
                             render="alta mensajes tabla"/>
                 </h:commandButton>

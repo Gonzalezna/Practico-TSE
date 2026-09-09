@@ -1,6 +1,7 @@
 package pr.java.gonzalezna.web;
 
 import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,10 @@ import jakarta.inject.Named;
 
 import pr.java.gonzalezna.entidades.Vehiculo;
 import pr.java.gonzalezna.negocio.INegocioLocal;
+
+import jakarta.jms.*;
+import jakarta.inject.Inject;
+import jakarta.annotation.Resource;
 
 @Named("vehiculoBean")
 @ViewScoped //el bean vive mientras el usuario esta en la misma vista
@@ -33,6 +38,13 @@ public class VehiculoBean implements Serializable {
     
     private Vehiculo vehiculo;
     
+    @Inject
+    @JMSConnectionFactory("java:/ConnectionFactory")
+    private JMSContext context;
+
+    @Resource(lookup = "java:/jms/queue/queue_alta_vehiculo")
+    private Queue cola;
+    
     @PostConstruct
     public void init() {
     	    vehiculo = new Vehiculo();
@@ -51,6 +63,25 @@ public class VehiculoBean implements Serializable {
         } catch (Exception e) {
             mensajeError = "Error: " + e.getMessage();
         }
+    }
+    
+    public void enviarAltaVehiculo() {
+    	limpiarMensajes();
+    	
+    	try {
+        String cuerpo = vehiculo.getId()
+                + "|" + vehiculo.getModelo()
+                + "|" + vehiculo.getPeso()
+                + "|" + vehiculo.getPotencia()
+        		+ "|" + vehiculo.getFechaFabricacion();
+
+        context.createProducer().send(cola, cuerpo);
+        
+        vehiculo = new Vehiculo();
+        mensajeExito = "Alta enviada a la queue";
+    	} catch (Exception e) {
+    		mensajeError = "Error:" + e.getMessage();
+    	}
     }
 
     public void listar() {

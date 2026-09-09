@@ -1,13 +1,20 @@
 package pr.java.gonzalezna.entidades;
 
 import java.io.Serializable;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
 import java.time.LocalDate;
 
+@Entity
 public class Vehiculo implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	//Atributos
+	@Id
 	private int id;
+	
 	private String modelo;
 	private int peso;
 	private int potencia;

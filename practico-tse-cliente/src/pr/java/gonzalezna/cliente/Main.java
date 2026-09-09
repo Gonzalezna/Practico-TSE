@@ -31,8 +31,8 @@ public class Main {
             String jndiName = "ejb:practico-tse/practico-tse-ejb/NegocioBean!pr.java.gonzalezna.negocio.INegocioRemote";
             System.out.println("Conectando y buscando EJB de Negocio en WildFly...");
             INegocioRemote negocio = (INegocioRemote) context.lookup(jndiName);
-
-            // --- camino 1: alta remota (ejercicio 1) ---
+            
+            // camino 1: alta remota 
             // NegocioBean exige potencia > 0 y peso > 0; hay que completar todos los campos de Vehiculo.
             System.out.println("\n--- Alta por EJB remoto ---");
             Vehiculo porEjb = new Vehiculo();
@@ -45,7 +45,7 @@ public class Main {
             negocio.altaVehiculo(porEjb);
             System.out.println("Vehiculo dado de alta por EJB.");
 
-            // --- camino 2: alta por cola (ejercicio 5) ---
+            // camino 2: alta por cola (ejercicio 5) 
             // El texto tiene que coincidir con AltaVehiculoMDB.parsear: 5 campos separados por |
             System.out.println("\n--- Alta por JMS ---");
             ConnectionFactory cf =
@@ -74,10 +74,8 @@ public class Main {
             System.out.println("\n--- Lista (el de JMS puede no estar todavía) ---");
             List<Vehiculo> lista = negocio.listarVehiculos();
             for (Vehiculo v : lista) {
-                System.out.println("ID: " + v.getId()
-                        + " | Modelo: " + v.getModelo()
-                        + " | Potencia: " + v.getPotencia() + " CV");
-            }
+                System.out.println("ID: " + v.getId() + " | Modelo: " + v.getModelo() + " | Potencia: " + v.getPotencia() + " CV");
+            }	
 
         } catch (Exception e) {
             System.err.println("Error al comunicarse con el servidor:");

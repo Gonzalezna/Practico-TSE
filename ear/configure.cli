@@ -1,0 +1,11 @@
+embed-server --server-config=standalone-full.xml --std-out=echo
+
+data-source add \
+    --name=PracticoTseDS \
+    --jndi-name=java:jboss/datasources/PracticoTseDS \
+    --driver-name=h2 \
+    --connection-url=jdbc:h2:/opt/jboss/wildfly/standalone/data/practico-tse \
+    --user-name=sa \
+    --password=sa
+
+/subsystem=messaging-activemq/server=default/jms-queue=queue_alta_vehiculo:add(entries=[java:/jms/queue/queue_alta_vehiculo])
